@@ -18,6 +18,10 @@ import java.util.Iterator;
 
 /**
  * @author hongzh.zhang on 2020/08/01
+ *
+ * 作用：对文件中的单词进行计数
+ *
+ * 在hadoop上运行
  * 1、把项目通过maven打成jar(需要指定main class为com.hong.hadoop.WordCountMR)
  * 2、把jar包(hadoop-learning-1.0-SNAPSHOT.jar)上传到服务器
  * 3、运行：hadoop jar hadoop-learning-1.0-SNAPSHOT.jar /textfile/file_hello.txt /out/count_out
