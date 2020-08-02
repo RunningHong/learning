@@ -11,7 +11,7 @@ import java.lang.reflect.Modifier;
  * 反射内部类
  * 通过反射的方式构造内部类实例调用方法print
  */
-public class ReflactInnerClass {
+public class ReflectInnerClass {
 
     public static void main(String[] args) {
         invokeInnerClassPrintMethod();
@@ -57,7 +57,7 @@ public class ReflactInnerClass {
      */
     public static void invokeInnerClassPrintMethod() {
         // 获取外部类的类型信息
-        Class clazz = ReflactInnerClass.class;
+        Class clazz = ReflectInnerClass.class;
         try {
             // 得到外部类实例
             Object outerClass=clazz.newInstance();
@@ -74,7 +74,7 @@ public class ReflactInnerClass {
                     Constructor innerStatic = cls.getDeclaredConstructor();
                     innerStatic.setAccessible(true);
 
-                    // 得到打印方法（如果方法是private的则需要使用getDeclaredMethod，
+                    // 得到打印方法（如果方法是private的则需要使用getDe`claredMethod，
                     // 再通过printMethod.setAccessible(true);设置访问权限）
                     Method printMethod = cls.getDeclaredMethod("print", String.class);
                     printMethod.setAccessible(true);
