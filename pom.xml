@@ -12,6 +12,7 @@
     <modules>
         <module>algorithm-learning</module>
         <module>hadoop-learning</module>
+        <module>base-learning</module>
     </modules>
 
     <properties>

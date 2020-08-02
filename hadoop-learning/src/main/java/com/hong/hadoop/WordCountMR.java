@@ -64,10 +64,6 @@ public class WordCountMR {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
-
-        System.out.println("args[0]  "+args[0]);
-        System.out.println("args[1]  "+args[1]);
-
         // 设置输入和输出路径
         FileInputFormat.setInputPaths(job, new Path(inputPath));
         FileOutputFormat.setOutputPath(job, new Path(outputPath));
@@ -81,38 +77,41 @@ public class WordCountMR {
         System.out.println("耗时："+(endMillis-beginMillis)+"millis");
     }
 
-    // 前两个参数类型（LongWritable，Text）代表Map的输入类型
-    //     longWritable: map的key-行偏移量
-    //     Text: map的value-行数据
-    // 后两个参数类型（Text，IntWritable）代表Map输出
-    //     Text: 输出类型的key
-    //     IntWritable: 输出类型的value
-    public static class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
-        @Override
-        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            String line=value.toString();
-            String[] words=line.split(" ");
-            for (String word : words) {
-                if (!"".equals(word.trim())) {
-                    context.write(new Text(word), new IntWritable(1));
-                }
+}
+
+
+// 前两个参数类型（LongWritable，Text）代表Map的输入类型
+//     longWritable: map的key-行偏移量
+//     Text: map的value-行数据
+// 后两个参数类型（Text，IntWritable）代表Map输出
+//     Text: 输出类型的key
+//     IntWritable: 输出类型的value
+// 注意：如果是写的内部类的形式需要加static关键字
+class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+    @Override
+    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        String line = value.toString();
+        String[] words = line.split(" ");
+        for (String word : words) {
+            if (!"".equals(word.trim())) {
+                context.write(new Text(word), new IntWritable(1));
             }
         }
     }
+}
 
 
-    // 前两个参数类型Text, IntWritable代表Map阶段输出的参数类型（即map最后context.write的参数类型）需要和main方法里的第5阶段类型(设置Map的输出类型)对应
-    // 后两个参数类型Text, IntWritable代表Reduce阶段输出的参数类型（即reduce最后context.write的参数类型）需要和main方法里的第7阶段类型(设置最终的输出类型)对应
-    public static class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
-        @Override
-        protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-            int sum=0;
-            Iterator<IntWritable> iter = values.iterator();
-            while (iter.hasNext()) {
-                sum+=iter.next().get();
-            }
-            context.write(key, new IntWritable(sum));
+// 前两个参数类型Text, IntWritable代表Map阶段输出的参数类型（即map最后context.write的参数类型）需要和main方法里的第5阶段类型(设置Map的输出类型)对应
+// 后两个参数类型Text, IntWritable代表Reduce阶段输出的参数类型（即reduce最后context.write的参数类型）需要和main方法里的第7阶段类型(设置最终的输出类型)对应
+// 注意：如果是写的内部类的形式需要加static关键字
+class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+    @Override
+    protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+        int sum=0;
+        Iterator<IntWritable> iter = values.iterator();
+        while (iter.hasNext()) {
+            sum+=iter.next().get();
         }
+        context.write(key, new IntWritable(sum));
     }
-
 }
