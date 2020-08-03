@@ -9,8 +9,8 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>concurrent-learning</artifactId>
-    <name>concurrent-learning</name>
+    <artifactId>algorithm-learning</artifactId>
+    <name>algorithm-learning</name>
 
     <dependencies>
         <dependency>
@@ -29,11 +29,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
