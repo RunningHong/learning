@@ -9,8 +9,8 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>algorithm-learning</artifactId>
-    <name>algorithm-learning</name>
+    <artifactId>hive-learning</artifactId>
+    <name>hive-learning</name>
 
     <dependencies>
         <dependency>
@@ -27,9 +27,13 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.16.10</version>
         </dependency>
     </dependencies>
-
 </project>

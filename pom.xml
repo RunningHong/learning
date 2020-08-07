@@ -13,6 +13,7 @@
         <module>algorithm-learning</module>
         <module>hadoop-learning</module>
         <module>base-learning</module>
+        <module>hive-learning</module>
     </modules>
 
     <properties>
@@ -83,6 +84,11 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.10</version>
         </dependency>
     </dependencies>
 
