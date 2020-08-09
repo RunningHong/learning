@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 public class StringToArrayGenericUDF extends GenericUDF {
 
-    private ArrayList aryayList = new ArrayList();
+    private ArrayList arrayList = new ArrayList();
     
     /**
      * 这个方法只调用一次，并且在evaluate()方法之前调用。
@@ -35,18 +35,18 @@ public class StringToArrayGenericUDF extends GenericUDF {
 
     @Override
     public Object evaluate(DeferredObject[] args) throws HiveException {
-        aryayList.clear();
+        arrayList.clear();
         if (args.length<1) {
-            return aryayList;
+            return arrayList;
         }
 
         // 获取第一个参数
         String content=args[0].get().toString();
         String[] words=content.split(",");
         for (String word : words) {
-            aryayList.add(word);
+            arrayList.add(word);
         }
-        return aryayList;
+        return arrayList;
     }
 
     /**
