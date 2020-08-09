@@ -39,7 +39,7 @@ public class GenericUDTFExplodeV2 extends GenericUDTF {
 
     @Override
     public void process(Object[] args) throws HiveException {
-        String str=(String)args[0]; // 得到当前行的数据
+        String str=args[0].toString(); // 得到当前行的数据,真实类型为Text
 
         String[] values=str.split(","); // 进行分割
 
