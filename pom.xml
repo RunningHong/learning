@@ -14,6 +14,7 @@
         <module>hadoop-learning</module>
         <module>base-learning</module>
         <module>hive-learning</module>
+        <module>hbase-learning</module>
     </modules>
 
     <properties>
