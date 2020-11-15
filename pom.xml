@@ -15,6 +15,7 @@
         <module>base-learning</module>
         <module>hive-learning</module>
         <module>hbase-learning</module>
+        <module>canal-learning</module>
     </modules>
 
     <properties>
