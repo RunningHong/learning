@@ -2,6 +2,7 @@ package com.hong;
 
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
+import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.CanalEntry.Column;
 import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
 import com.alibaba.otter.canal.protocol.CanalEntry.EntryType;
@@ -10,6 +11,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry.RowChange;
 import com.alibaba.otter.canal.protocol.CanalEntry.RowData;
 import com.alibaba.otter.canal.protocol.Message;
 
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
@@ -53,6 +55,8 @@ public class CanalClient {
                     long millis = System.currentTimeMillis();
                     System.out.println("\n###################### "+millis+" ######################");
                     printEntry(message.getEntries());
+
+//                    printEntry2(message.getEntries());
                     System.out.println("\n");
                     line_num=0;
                 }
@@ -69,24 +73,24 @@ public class CanalClient {
                 continue;
             }
 
-            RowChange rowChage = null;
+            RowChange rowChange = null;
             try {
-                rowChage = RowChange.parseFrom(entry.getStoreValue());
+                rowChange = RowChange.parseFrom(entry.getStoreValue());
             } catch (Exception e) {
                 throw new RuntimeException("ERROR ## parser of eromanga-event has an error , data:" + entry.toString(),
                         e);
             }
 
-            EventType eventType = rowChage.getEventType();
+            EventType eventType = rowChange.getEventType();
             System.out.println(String.format("================&gt; binlog[%s:%s] , name[%s,%s] , eventType : %s",
                     entry.getHeader().getLogfileName(), entry.getHeader().getLogfileOffset(),
                     entry.getHeader().getSchemaName(), entry.getHeader().getTableName(),
                     eventType));
 
             // 打印变更的sql-DDL
-//            System.out.println(rowChage.getSql());
+//            System.out.println(rowChange.getSql());
 
-            for (RowData rowData : rowChage.getRowDatasList()) {
+            for (RowData rowData : rowChange.getRowDatasList()) {
                 if (eventType == EventType.DELETE) {
                     printColumn(rowData.getBeforeColumnsList());
                 } else if (eventType == EventType.INSERT) {
@@ -100,6 +104,85 @@ public class CanalClient {
             }
         }
     }
+
+    public final static String DEFAULT_ENCODE = "ISO-8859-1";
+    public final static String SEP = "|";
+
+    private static void printEntry2(List<Entry> entrys) {
+        for (Entry entry : entrys) {
+
+            // 只关注ROWDATA类型的Entry
+            if (entry.getEntryType() != EntryType.ROWDATA) {
+                continue;
+            }
+
+            // 获取header
+            CanalEntry.Header header = entry.getHeader();
+            // 忽略QUERY
+            if (header.getEventType() == EventType.QUERY) {
+                continue;
+            }
+
+            // 从header获取信息
+            EventType eventType = header.getEventType();
+            long eventLength = header.getEventLength();
+            long executeTime = header.getExecuteTime();
+            String logFileName = header.getLogfileName();
+            long logfileOffset = header.getLogfileOffset();
+            String schemaName = header.getSchemaName();
+            String tableName = header.getTableName();
+
+
+            //获取rowChange
+            RowChange rowChange;
+            try {
+                rowChange = RowChange.parseFrom(entry.getStoreValue());
+            } catch (Exception e) {
+                throw new RuntimeException("parse event occurs an error , data:" + entry.toString(), e);
+            }
+
+            int rowDatasCount = rowChange.getRowDatasCount();
+
+            String mes = String.format("=========== binlog【logFileName[%s], logfileOffset[%s]】, " +
+                            "schemaName[%s], tableName[%s], " +
+                            "eventType[%s], eventLength[%s], " +
+                            "executeTime[%s], rowDatasCount[%s]",
+                    logFileName, logfileOffset,
+                    schemaName, tableName,
+                    eventType, eventLength,
+                    executeTime, rowDatasCount);
+            System.out.println(mes);
+
+            try {
+                String mes2 = schemaName + SEP + tableName + SEP + executeTime + SEP
+                        + rowChange.toByteString().toString(DEFAULT_ENCODE);
+                System.out.printf("###########" + mes2);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            // 根据类型[DELETE||INSERT||other]打印变更的字段
+//            for (RowData rowData : rowChange.getRowDatasList()) {
+//                if (eventType == EventType.DELETE) {
+//                    printColumn(rowData.getBeforeColumnsList());
+//                } else if (eventType == EventType.INSERT) {
+//                    printColumn(rowData.getAfterColumnsList());
+//                } else {
+//                    System.out.println("-------&gt; before");
+//                    printColumn(rowData.getBeforeColumnsList());
+//                    System.out.println("-------&gt; after");
+//                    printColumn(rowData.getAfterColumnsList());
+//                }
+//            }
+
+        }
+
+    }
+
+
+
+
+
 
     private static void printColumn(List<Column> columns) {
         for (Column column : columns) {
