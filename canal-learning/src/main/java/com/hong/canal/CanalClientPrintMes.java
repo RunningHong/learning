@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * canal打印官方案例--更改了部分信息
  * @author hongzh.zhang on 2020/11/22
  */
 public class CanalClientPrintMes {
