@@ -10,8 +10,8 @@ import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
 import com.alibaba.otter.canal.protocol.CanalEntry.RowChange;
 import com.alibaba.otter.canal.protocol.CanalEntry.RowData;
 import com.alibaba.otter.canal.protocol.Message;
+import com.hong.canal.CanalClientPrintMes;
 
-import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
@@ -21,6 +21,8 @@ import java.util.List;
 public class CanalClient {
     public static void main(String args[]) {
         System.out.println("开始获取变更的binlog信息");
+
+        CanalClientPrintMes canalClientPrintMes = new CanalClientPrintMes();
 
         // 创建链接
         CanalConnector connector = CanalConnectors.newSingleConnector(
@@ -54,9 +56,16 @@ public class CanalClient {
                 } else { // 有消息这接打印
                     long millis = System.currentTimeMillis();
                     System.out.println("\n###################### "+millis+" ######################");
-                    printEntry(message.getEntries());
 
-//                    printEntry2(message.getEntries());
+                    // print demo1
+                    // printEntry(message.getEntries());
+
+                    // print demo2
+                    printEntry2(message.getEntries());
+
+                    // 官方print案例更改
+                    // canalClientPrintMes.printEntry(message.getEntries());
+
                     System.out.println("\n");
                     line_num=0;
                 }
@@ -69,6 +78,7 @@ public class CanalClient {
 
     private static void printEntry(List<Entry> entrys) {
         for (Entry entry : entrys) {
+            // 跳过事务的开始以及结束
             if (entry.getEntryType() == EntryType.TRANSACTIONBEGIN || entry.getEntryType() == EntryType.TRANSACTIONEND) {
                 continue;
             }
@@ -87,26 +97,17 @@ public class CanalClient {
                     entry.getHeader().getSchemaName(), entry.getHeader().getTableName(),
                     eventType));
 
-            // 打印变更的sql-DDL
-//            System.out.println(rowChange.getSql());
 
-            for (RowData rowData : rowChange.getRowDatasList()) {
-                if (eventType == EventType.DELETE) {
-                    printColumn(rowData.getBeforeColumnsList());
-                } else if (eventType == EventType.INSERT) {
-                    printColumn(rowData.getAfterColumnsList());
-                } else {
-                    System.out.println("-------&gt; before");
-                    printColumn(rowData.getBeforeColumnsList());
-                    System.out.println("-------&gt; after");
-                    printColumn(rowData.getAfterColumnsList());
-                }
+            // 如果是DDL语句--打印变更的sql
+            if (rowChange.getIsDdl()) {
+                System.out.println(rowChange.getSql());
             }
+
+            // 打印变更的字段信息
+            printRowDataMes(rowChange, eventType);
         }
     }
 
-    public final static String DEFAULT_ENCODE = "ISO-8859-1";
-    public final static String SEP = "|";
 
     private static void printEntry2(List<Entry> entrys) {
         for (Entry entry : entrys) {
@@ -118,7 +119,7 @@ public class CanalClient {
 
             // 获取header
             CanalEntry.Header header = entry.getHeader();
-            // 忽略QUERY
+            // 忽略QUERY，如果binlog设置为row也不会出现QUERY的eventType
             if (header.getEventType() == EventType.QUERY) {
                 continue;
             }
@@ -132,7 +133,6 @@ public class CanalClient {
             String schemaName = header.getSchemaName();
             String tableName = header.getTableName();
 
-
             //获取rowChange
             RowChange rowChange;
             try {
@@ -141,52 +141,59 @@ public class CanalClient {
                 throw new RuntimeException("parse event occurs an error , data:" + entry.toString(), e);
             }
 
-            int rowDatasCount = rowChange.getRowDatasCount();
+            int rowDataCount = rowChange.getRowDatasCount();
 
-            String mes = String.format("=========== binlog【logFileName[%s], logfileOffset[%s]】, " +
-                            "schemaName[%s], tableName[%s], " +
-                            "eventType[%s], eventLength[%s], " +
-                            "executeTime[%s], rowDatasCount[%s]",
+            String mes = String.format("=========== logFileName[%s], logfileOffset[%s], " +
+                            "\n\t\t\tschemaName[%s], tableName[%s], " +
+                            "\n\t\t\teventType[%s], eventLength[%s], " +
+                            "\n\t\t\texecuteTime[%s], rowDatasCount[%s]",
                     logFileName, logfileOffset,
                     schemaName, tableName,
                     eventType, eventLength,
-                    executeTime, rowDatasCount);
+                    executeTime, rowDataCount);
             System.out.println(mes);
 
-            try {
-                String mes2 = schemaName + SEP + tableName + SEP + executeTime + SEP
-                        + rowChange.toByteString().toString(DEFAULT_ENCODE);
-                System.out.printf("###########" + mes2);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+            // 打印变更的字段信息
+            printRowDataMes(rowChange, eventType);
+        }
+
+    }
+
+    /**
+     * 打印变更的字段信息
+     */
+    private static void printRowDataMes(RowChange rowChange, EventType eventType) {
+        // 根据类型[DELETE||INSERT||other]打印变更的字段
+        for (RowData rowData : rowChange.getRowDatasList()) {
+            if (eventType == EventType.DELETE) {
+                printColumn(rowData.getBeforeColumnsList());
+            } else if (eventType == EventType.INSERT) {
+                printColumn(rowData.getAfterColumnsList());
+            } else {
+                System.out.println("\n-------更改前字段信息如下：");
+                printColumn(rowData.getBeforeColumnsList());
+                System.out.println("-------更改后字段信息如下：");
+                printColumn(rowData.getAfterColumnsList());
+                System.out.println("\n");
             }
-
-            // 根据类型[DELETE||INSERT||other]打印变更的字段
-//            for (RowData rowData : rowChange.getRowDatasList()) {
-//                if (eventType == EventType.DELETE) {
-//                    printColumn(rowData.getBeforeColumnsList());
-//                } else if (eventType == EventType.INSERT) {
-//                    printColumn(rowData.getAfterColumnsList());
-//                } else {
-//                    System.out.println("-------&gt; before");
-//                    printColumn(rowData.getBeforeColumnsList());
-//                    System.out.println("-------&gt; after");
-//                    printColumn(rowData.getAfterColumnsList());
-//                }
-//            }
-
         }
 
     }
 
 
-
-
-
-
+    /**
+     * 打印字段信息
+     */
     private static void printColumn(List<Column> columns) {
         for (Column column : columns) {
-            System.out.println(column.getName() + " : " + column.getValue() + "    update=" + column.getUpdated());
+            String colName = column.getName(); // 字段名称
+            String colType = column.getMysqlType(); // 字段类型
+            String colValue = column.getValue(); // 字段值
+            boolean isUpdate = column.getUpdated(); // 这次该字段是否更新
+
+            System.out.println(String.format(
+                    "\t\t\tcolName[%s]\tcolType[%s]\tcolValue[%s]\tisUpdate[%s]",
+                    colName, colType, colValue, isUpdate));
         }
     }
 
