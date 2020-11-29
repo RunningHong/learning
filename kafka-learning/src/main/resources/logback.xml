@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!--<logger name="org.apache.kafka.clients" level="DEBUG"></logger>-->
+
+    <!--输出到控制台-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 设置为日志level=info,过滤掉debug日志 -->
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

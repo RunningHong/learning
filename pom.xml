@@ -17,6 +17,7 @@
         <module>hbase-learning</module>
         <module>canal-learning</module>
         <module>scala-learning</module>
+        <module>kafka-learning</module>
     </modules>
 
     <properties>
