@@ -9,6 +9,7 @@ public class OperatorStackTest {
         String aa = "111";
         {
             String bb="22";
+            System.out.println(bb);
         }
 
         int num1 = 3;
