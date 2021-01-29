@@ -1,13 +1,15 @@
 package com.hong.concurrent;
 
+import static java.lang.Thread.sleep;
+
 /**
- * @author create by hongzh.zhang on 2021-01-27
- * 继承Thread，使用同步方法的形式保证线程安全
+ * @author create by hongzh.zhang on 2021-01-29
+ * 实现Runnable接口，使用同步方法的形式保证线程安全
  * 三个线程共卖100张票
  */
-public class T04ThreadSyncMethod extends Thread {
+public class T06RunnableSyncMethod implements Runnable {
 
-    // 需要共享的数据，需要设置为static，才能在不同的类中共享
+    // 需要共享的数据
     public static int ticket=100;
 
     @Override
@@ -20,9 +22,9 @@ public class T04ThreadSyncMethod extends Thread {
     /**
      * @author Create by hongzh.zhang on 2021/1/29
      * synchronized修饰方法时同步监视器使用的是this对象，
-     * 为了保证线程安全方法需要修饰为static（即监视器使用该类的类型信息）
+     * 这里不需要像继承Thread的形式给方法加上static，因为this对象直接就是共享的
      */
-    private static synchronized void sellTickets() {
+    private synchronized void sellTickets() {
         if (ticket>0) {
             try {
                 sleep(10);
@@ -35,9 +37,12 @@ public class T04ThreadSyncMethod extends Thread {
         }
     }
 
+
     public static void main(String[] args) {
-        Thread window1 = new T04ThreadSyncMethod();
-        Thread window2 = new T04ThreadSyncMethod();
+        T06RunnableSyncMethod t06RunnableSyncMethod = new T06RunnableSyncMethod();
+
+        Thread window1 = new Thread(t06RunnableSyncMethod);
+        Thread window2 = new Thread(t06RunnableSyncMethod);
 
         window1.setName("A");
         window2.setName("B");
@@ -45,4 +50,5 @@ public class T04ThreadSyncMethod extends Thread {
         window1.start();
         window2.start();
     }
+
 }
