@@ -1,5 +1,6 @@
 package com.hong.concurrent;
 
+
 /**
  * @author hongzh.zhang on 2021/01/30
  * 生产者消费者问题
@@ -44,6 +45,15 @@ class Clerk {
      * 生产产品
      */
     public synchronized void produceProduct() {
+
+        if (productCount < 5) {
+            System.out.println(Thread.currentThread().getName() + ":【库存量" + productCount + "】库存有点不足，加把力，一次多生产点");
+            productCount++;
+            System.out.println(Thread.currentThread().getName() + ":开始生产第" + productCount + "个产品");
+            productCount++;
+            System.out.println(Thread.currentThread().getName() + ":开始生产第" + productCount + "个产品");
+            System.out.println(Thread.currentThread().getName() + ":一下生产了两个应该够了吧");
+        }
         if (productCount < 20) {
             productCount++;
             System.out.println(Thread.currentThread().getName() + ":开始生产第" + productCount + "个产品");
@@ -115,7 +125,7 @@ class Consumer extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(30);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
