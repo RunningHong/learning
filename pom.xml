@@ -18,6 +18,7 @@
         <module>canal-learning</module>
         <module>scala-learning</module>
         <module>kafka-learning</module>
+        <module>redis-learning</module>
     </modules>
 
     <properties>
