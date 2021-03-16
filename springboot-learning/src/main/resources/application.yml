@@ -1,0 +1,4 @@
+spring:
+  profiles:
+    active: dev # 通过该选项直接选择对应的application-xxx.yml配置文件
+
