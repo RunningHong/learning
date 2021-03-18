@@ -3,7 +3,6 @@ package com.hong.springboot.util.dynamicDataSource;
 import com.alibaba.druid.pool.DruidDataSource;
 
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.sql.Connection;
@@ -19,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
  * 继承spring框架的AbstractRoutingDataSource来实现动态数据源功能
  */
 @Slf4j
-@Component
 public class DynamicDataSource extends AbstractRoutingDataSource {
 
     /**
@@ -88,10 +86,12 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
                 // 将map赋值给父类(AbstractRoutingDataSource)的TargetDataSources
                 super.setTargetDataSources(dynamicTargetDataSources);
 
-                // 将TargetDataSources中的连接信息放入父类的resolvedDataSources管理
+                // 将TargetDataSources中的连接信息放入父类的resolvedDataSources管理, 通知spring有bean更新"
                 super.afterPropertiesSet();
                 log.info("数据源【{}】创建成功", dataSourceName);
 
+                // 给线程上下问题添加数据源key
+                DataSourceContextHolder.setDataSource(dataSourceName);
             } catch (Exception e) {
                 log.error("数据源【{}】创建失败", dataSourceName);
                 e.printStackTrace();
