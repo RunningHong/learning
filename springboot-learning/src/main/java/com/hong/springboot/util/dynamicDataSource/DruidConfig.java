@@ -37,8 +37,9 @@ public class DruidConfig {
     private String driverClassName;
 
 
-    @Bean // 声明其为Bean实例
-    public DataSource dataSource() {
+    @Bean // 得到druid数据源bean实例
+    public DataSource druidDataSource() {
+        // 创建druid数据源
         DruidDataSource druidDataSource = new DruidDataSource();
 
         // 基础连接信息
@@ -64,12 +65,12 @@ public class DruidConfig {
         log.info("注入bean： dynamicDataSource");
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
 
-        DataSource dataSource = dataSource(); // 得到数据库连接池实例
-        dynamicDataSource.setDefaultTargetDataSource(dataSource); // 设置默认数据源
+        DataSource druidDataSource = druidDataSource(); // 得到druid数据库连接池实例
+        dynamicDataSource.setDefaultTargetDataSource(druidDataSource); // 设置默认数据源
 
         Map<Object, Object> targetDataSources = new HashMap<>();
-        targetDataSources.put("defaultDataSource", dataSource);
-        dynamicDataSource.setTargetDataSources(targetDataSources);
+        targetDataSources.put("defaultDataSource", druidDataSource);
+        dynamicDataSource.setTargetDataSources(targetDataSources); // 设置可路由的列表
 
         return dynamicDataSource;
     }

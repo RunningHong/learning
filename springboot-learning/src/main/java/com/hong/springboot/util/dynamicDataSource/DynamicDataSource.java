@@ -27,7 +27,7 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     private Map<Object, Object> dynamicTargetDataSources = new ConcurrentHashMap<>();
 
     /**
-     * 从DataSourceContextHolder拿到当前线程需要的数据源
+     * 从DataSourceContextHolder拿到当前线程需要的数据源key
      * AbstractRoutingDataSource会根据数据源key去拿到已经注入AbstractRoutingDataSource.targetDataSources的数据库连接
      */
     @Override

@@ -5,6 +5,7 @@ import com.hong.springboot.service.TestService;
 import com.hong.springboot.util.WebResponse;
 import com.hong.springboot.util.dynamicDataSource.DataSourceContextHolder;
 import com.hong.springboot.util.dynamicDataSource.DynamicDataSource;
+import com.hong.springboot.util.dynamicDataSource.SpecifyDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,4 +62,30 @@ public class TestServiceImpl implements TestService {
 
         return WebResponse.success(list);
     }
+
+    // 使用注解声明动态数据源为test1
+    @SpecifyDataSource(dataSourceName="test1", driverClass="com.mysql.cj.jdbc.Driver",
+        url="jdbc:mysql://localhost:3306/test1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8",
+        username="test1", password="test1"
+    )
+    public WebResponse dynamicDataSourceTest2() {
+
+        List<Object> list = testMapper.getTestList();
+        return WebResponse.success(list);
+    }
+
+
+    // 使用注解声明动态数据源为test2
+    @SpecifyDataSource(dataSourceName="test2", driverClass="com.mysql.cj.jdbc.Driver",
+            url="jdbc:mysql://localhost:3306/test2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8",
+            username="test1", password="test1"
+    )
+    public WebResponse dynamicDataSourceTest3() {
+
+
+        List<Object> list = testMapper.getTestList();
+        return WebResponse.success(list);
+    }
+
+
 }
