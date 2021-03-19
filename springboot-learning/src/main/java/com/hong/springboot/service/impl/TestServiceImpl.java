@@ -30,7 +30,6 @@ public class TestServiceImpl implements TestService {
         String username;
         String password;
 
-
         if ("1".equals(type) || "2".equals(type)) {
             if ("1".equals(type)) {
                 dataSourceName="test1";
@@ -57,8 +56,7 @@ public class TestServiceImpl implements TestService {
 
         List<Object> list = testMapper.getTestList();
 
-
-        // 移除当前数据源
+        // 切换至默认数据源
         DataSourceContextHolder.removeDataSource();
 
         return WebResponse.success(list);

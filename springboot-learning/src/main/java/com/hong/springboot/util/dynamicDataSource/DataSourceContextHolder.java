@@ -20,7 +20,7 @@ public class DataSourceContextHolder {
      * 给当前线程更换数据源
      * @param datasource
      */
-    public static void setDataSource(String datasource){
+    public static void setDataSource(String datasource) {
         CONTEXT_HOLDER.set(datasource);
         log.info("已更换到数据源:{}", datasource);
     }
@@ -33,10 +33,10 @@ public class DataSourceContextHolder {
     }
 
     /**
-     * 移除特定数据源，及切换到主数据源
+     * 移除特定数据源，及切换到默认数据源
      */
-    public static void removeDataSource(){
+    public static void removeDataSource() {
         CONTEXT_HOLDER.remove();
-        log.info("已切换到主数据源");
+        log.info("切换为【默认数据源】");
     }
 }

@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author create by hongzh.zhang on 2021-03-18
  */
-@Configuration // 配置类，相当于spring的xml配置文件中的<bean>
+@Configuration // 配置类，@Bean相当于spring的xml配置文件中的<bean>
 @EnableTransactionManagement // 允许事务管理
 @Slf4j
 public class DruidConfig {
@@ -51,21 +51,26 @@ public class DruidConfig {
         druidDataSource.setMinIdle(5);
         druidDataSource.setMaxActive(20);
         druidDataSource.setMaxWait(60000);
-        //是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
+        // 是否缓存preparedStatement，也就是PSCache。
+        // PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
         druidDataSource.setPoolPreparedStatements(false);
         druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(50);
+
         return druidDataSource;
     }
 
     @Bean(name = "dynamicDataSource")
     public DynamicDataSource dynamicDataSource() {
-        log.info("dynamicDataSource启动");
+        log.info("注入bean： dynamicDataSource");
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
-        DataSource dataSource = dataSource();
-        dynamicDataSource.setDefaultTargetDataSource(dataSource);
+
+        DataSource dataSource = dataSource(); // 得到数据库连接池实例
+        dynamicDataSource.setDefaultTargetDataSource(dataSource); // 设置默认数据源
+
         Map<Object, Object> targetDataSources = new HashMap<>();
-        targetDataSources.put("defaultDataSource", dataSource); // 设置默认数据源
+        targetDataSources.put("defaultDataSource", dataSource);
         dynamicDataSource.setTargetDataSources(targetDataSources);
+
         return dynamicDataSource;
     }
 
@@ -73,6 +78,7 @@ public class DruidConfig {
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dynamicDataSource());
+
         return sqlSessionFactoryBean.getObject();
     }
 
