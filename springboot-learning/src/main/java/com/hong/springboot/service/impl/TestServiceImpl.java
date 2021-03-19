@@ -3,6 +3,7 @@ package com.hong.springboot.service.impl;
 import com.hong.springboot.mapper.TestMapper;
 import com.hong.springboot.service.TestService;
 import com.hong.springboot.util.WebResponse;
+import com.hong.springboot.util.dynamicDataSource.DataSourceContextHolder;
 import com.hong.springboot.util.dynamicDataSource.DynamicDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,34 +30,37 @@ public class TestServiceImpl implements TestService {
         String username;
         String password;
 
-        if ("1".equals(type)) {
-            dataSourceName="test1";
-            driverClass="com.mysql.cj.jdbc.Driver";
-            url="jdbc:mysql://localhost:3306/test1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8";
-            username="test1";
-            password="test1";
-        } else {
-            dataSourceName="test2";
-            driverClass="com.mysql.cj.jdbc.Driver";
-            url="jdbc:mysql://localhost:3306/test2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8";
-            username="test1";
-            password="test1";
-        }
 
-        try {
-            // 根据连接信息切换数据源
-            dynamicDataSource.initDynamicDataSource(dataSourceName, driverClass,
-                                                    url, username, password);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if ("1".equals(type) || "2".equals(type)) {
+            if ("1".equals(type)) {
+                dataSourceName="test1";
+                driverClass="com.mysql.cj.jdbc.Driver";
+                url="jdbc:mysql://localhost:3306/test1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8";
+                username="test1";
+                password="test1";
+            } else {
+                dataSourceName = "test2";
+                driverClass = "com.mysql.cj.jdbc.Driver";
+                url = "jdbc:mysql://localhost:3306/test2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8";
+                username = "test1";
+                password = "test1";
+            }
+
+            try {
+                // 根据连接信息切换数据源
+                dynamicDataSource.useDynamicDataSource(dataSourceName, driverClass,
+                        url, username, password);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         List<Object> list = testMapper.getTestList();
 
 
+        // 移除当前数据源
+        DataSourceContextHolder.removeDataSource();
 
         return WebResponse.success(list);
-
-
     }
 }

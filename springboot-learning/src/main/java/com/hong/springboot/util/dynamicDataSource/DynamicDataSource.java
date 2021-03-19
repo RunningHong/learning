@@ -57,8 +57,8 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
      * @param username 数据库用户名
      * @param password 数据库密码
      */
-    public void initDynamicDataSource(String dataSourceName, String driverClass,
-                                      String url, String username, String password) throws Exception {
+    public void useDynamicDataSource(String dataSourceName, String driverClass,
+                                     String url, String username, String password) throws Exception {
 
         if (!dynamicTargetDataSources.containsKey(dataSourceName)) { // 数据源未创建，创建数据源
             log.info("数据源【{}】未创建，准备创建数据源", dataSourceName);
@@ -88,7 +88,6 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
                 // 将TargetDataSources中的连接信息放入父类的resolvedDataSources管理, 通知spring有bean更新"
                 super.afterPropertiesSet();
-                log.info("数据源【{}】创建成功", dataSourceName);
 
                 // 给线程上下问题添加数据源key
                 DataSourceContextHolder.setDataSource(dataSourceName);
@@ -103,12 +102,10 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
             Connection connection = null;
             try { // 测试数据源连接
-                log.info("数据源【{}】->最大连接数【{}】，闲置连接数【{}】", dataSourceName,
-                        druidDataSource.getPoolingCount(), druidDataSource.getActiveCount());
-                log.info("准备获取【{}】连接...", dataSourceName);
-
+//                log.info("数据源【{}】->最大连接数【{}】，闲置连接数【{}】", dataSourceName,
+//                        druidDataSource.getPoolingCount(), druidDataSource.getActiveCount());
                 connection = druidDataSource.getConnection();
-                log.info("数据源【{}】连接正常", dataSourceName);
+//                log.info("数据源【{}】连接正常", dataSourceName);
             } catch(Exception e) {
                 log.error("数据源【{}】连接测试失败", dataSourceName);
                 e.printStackTrace();
