@@ -19,6 +19,7 @@
         <module>scala-learning</module>
         <module>kafka-learning</module>
         <module>redis-learning</module>
+        <module>springboot-learning</module>
     </modules>
 
     <properties>
