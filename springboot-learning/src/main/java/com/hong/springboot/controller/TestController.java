@@ -66,5 +66,33 @@ public class TestController {
     }
 
 
+    /**
+     * 动态数据源测试1
+     */
+    @ResponseBody
+    @GetMapping("/dynamicDataSource1")
+    public WebResponse dynamicDataSource1() {
+        try {
+            return testService.dynamicDataSource1();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return WebResponse.fail("数据出错了" + e.getMessage());
+        }
+    }
+
+
+    /**
+     * 动态数据源测试2
+     */
+    @ResponseBody
+    @GetMapping("/dynamicDataSource2")
+    public WebResponse dynamicDataSource2() {
+        try {
+            return testService.dynamicDataSource2();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return WebResponse.fail("数据出错了" + e.getMessage());
+        }
+    }
 
 }

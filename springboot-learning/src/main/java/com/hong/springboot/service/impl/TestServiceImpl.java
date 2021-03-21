@@ -65,14 +65,13 @@ public class TestServiceImpl implements TestService {
 
 
     /**
-     * 测试2，使用注解+AOP的形式在方法上使用动态数据源
+     * ！！！记录一下AOP中会出现的问题：
+     * 该方法无法使用到动态数据源的效果，即不管怎么样都只会使用默认的数据源
+     * 方法内调用AOP的方法增强会失效(也就得不到注解上的信息)，详见AOP之动态代理原理
+     * 解决方法详见：https://blog.csdn.net/fumushan/article/details/80090947
      * @param type
      * @return
      */
-//    @SpecifyDataSource(dataSourceName="test1", driverClass="com.mysql.cj.jdbc.Driver",
-//            url="jdbc:mysql://localhost:3306/test1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8",
-//            username="test1", password="test1"
-//    )
     public WebResponse dynamicDataSourceTest2(String type) {
         if ("1".equals(type)) {
             return dynamicDataSource1();
@@ -82,7 +81,6 @@ public class TestServiceImpl implements TestService {
             List<Object> list = testMapper.getTestList();
             return WebResponse.success(list);
         }
-//        return WebResponse.success("ddd");
     }
 
 

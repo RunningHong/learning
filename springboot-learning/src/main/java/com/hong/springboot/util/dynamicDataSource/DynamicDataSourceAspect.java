@@ -32,7 +32,11 @@ public class DynamicDataSourceAspect {
     private void pointcut() {
     }
 
-    @Before("pointcut()") // 获取数据源基础信息&根据基础信息创建并切换数据源
+    /**
+     * 前置增强
+     * 获取数据源基础信息&根据基础信息创建并切换数据源
+     */
+    @Before("pointcut()")
     public void before(JoinPoint joinPoint) throws Exception {
 
         // 根据连接点获取到执行的类信息
@@ -48,17 +52,23 @@ public class DynamicDataSourceAspect {
 
         // 获取方法上的SpecifyDataSource注解
         SpecifyDataSource specifyDataSource = method.getAnnotation(SpecifyDataSource.class);
-//        String dataSourceName = specifyDataSource.dataSourceName();
-//        String driverClass = specifyDataSource.driverClass();
-//        String url = specifyDataSource.url();
-//        String username = specifyDataSource.username();
-//        String password = specifyDataSource.password();
-//
-//        log.info("aaaa" + dataSourceName);
+        String dataSourceName = specifyDataSource.dataSourceName();
+        String driverClass = specifyDataSource.driverClass();
+        String url = specifyDataSource.url();
+        String username = specifyDataSource.username();
+        String password = specifyDataSource.password();
+
+        // 动态切换数据源
+        dynamicDataSource.useDynamicDataSource(dataSourceName, driverClass,
+                                                url, username, password);
 
     }
 
-    @After("pointcut()") // 最后切换为默认数据源
+    /**
+     * 后置增强
+     * 最后切换为默认数据源
+     */
+    @After("pointcut()")
     public void after() {
         // 切换为默认数据源
         DataSourceContextHolder.removeDataSource();
