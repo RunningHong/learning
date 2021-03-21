@@ -63,13 +63,36 @@ public class TestServiceImpl implements TestService {
         return WebResponse.success(list);
     }
 
+
+    /**
+     * 测试2，使用注解+AOP的形式在方法上使用动态数据源
+     * @param type
+     * @return
+     */
+//    @SpecifyDataSource(dataSourceName="test1", driverClass="com.mysql.cj.jdbc.Driver",
+//            url="jdbc:mysql://localhost:3306/test1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8",
+//            username="test1", password="test1"
+//    )
+    public WebResponse dynamicDataSourceTest2(String type) {
+        if ("1".equals(type)) {
+            return dynamicDataSource1();
+        } else if ("2".equals(type)) {
+            return dynamicDataSource2();
+        } else {
+            List<Object> list = testMapper.getTestList();
+            return WebResponse.success(list);
+        }
+//        return WebResponse.success("ddd");
+    }
+
+
+
     // 使用注解声明动态数据源为test1
     @SpecifyDataSource(dataSourceName="test1", driverClass="com.mysql.cj.jdbc.Driver",
         url="jdbc:mysql://localhost:3306/test1?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8",
         username="test1", password="test1"
     )
-    public WebResponse dynamicDataSourceTest2() {
-
+    public WebResponse dynamicDataSource1() {
         List<Object> list = testMapper.getTestList();
         return WebResponse.success(list);
     }
@@ -80,9 +103,7 @@ public class TestServiceImpl implements TestService {
             url="jdbc:mysql://localhost:3306/test2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8",
             username="test1", password="test1"
     )
-    public WebResponse dynamicDataSourceTest3() {
-
-
+    public WebResponse dynamicDataSource2() {
         List<Object> list = testMapper.getTestList();
         return WebResponse.success(list);
     }

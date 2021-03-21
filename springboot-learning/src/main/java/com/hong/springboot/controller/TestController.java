@@ -51,4 +51,20 @@ public class TestController {
     }
 
 
+    /**
+     * 动态数据源测试
+     */
+    @ResponseBody
+    @GetMapping("/dynamicDataSourceTest2")
+    public WebResponse dynamicDataSourceTest2(@RequestParam(value = "type") String type) {
+        try {
+            return testService.dynamicDataSourceTest2(type);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return WebResponse.fail("数据出错了" + e.getMessage());
+        }
+    }
+
+
+
 }

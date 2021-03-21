@@ -29,10 +29,10 @@ public class DynamicDataSourceAspect {
 
     // 声明切入点：也就是在哪会进行操作
     @Pointcut("@annotation(com.hong.springboot.util.dynamicDataSource.SpecifyDataSource)")
-    private void pointCut() {
+    private void pointcut() {
     }
 
-    @Before("pointCut()") // 获取数据源基础信息&根据基础信息创建并切换数据源
+    @Before("pointcut()") // 获取数据源基础信息&根据基础信息创建并切换数据源
     public void before(JoinPoint joinPoint) throws Exception {
 
         // 根据连接点获取到执行的类信息
@@ -46,16 +46,19 @@ public class DynamicDataSourceAspect {
         // 获取到方法
         Method method = clazz.getMethod(methodName, argClass);
 
+        // 获取方法上的SpecifyDataSource注解
         SpecifyDataSource specifyDataSource = method.getAnnotation(SpecifyDataSource.class);
-        String dataSourceName = specifyDataSource.dataSourceName();
-        String driverClass = specifyDataSource.driverClass();
-        String url = specifyDataSource.url();
-        String username = specifyDataSource.username();
-        String password = specifyDataSource.password();
+//        String dataSourceName = specifyDataSource.dataSourceName();
+//        String driverClass = specifyDataSource.driverClass();
+//        String url = specifyDataSource.url();
+//        String username = specifyDataSource.username();
+//        String password = specifyDataSource.password();
+//
+//        log.info("aaaa" + dataSourceName);
 
     }
 
-    @After("pointCut()") // 最后切换为默认数据源
+    @After("pointcut()") // 最后切换为默认数据源
     public void after() {
         // 切换为默认数据源
         DataSourceContextHolder.removeDataSource();
