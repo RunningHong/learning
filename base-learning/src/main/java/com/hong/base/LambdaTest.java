@@ -1,5 +1,7 @@
 package com.hong.base;
 
+import org.junit.Test;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -109,6 +111,12 @@ public class LambdaTest {
             return "this is supplier provide 2";
         };
         System.out.println(supplier1.get());
+    }
+
+
+    @Test
+    public void testStreamFilter() {
+        System.out.println("d");
     }
 
 
